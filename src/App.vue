@@ -1,11 +1,21 @@
 <template>
-  <div>Esta es la pagina inicial</div>
-
   <RouterView />
 </template>
 
 <script>
-export default {}
+import { supabase } from './services/supabase'
+import { useRouter } from 'vue-router'
+
+export default {
+  setup: function () {
+    const router = useRouter()
+
+    const user = supabase.auth.user()
+
+    if (user === null) return
+    router.push('/posts')
+  },
+}
 </script>
 
 <style scoped></style>

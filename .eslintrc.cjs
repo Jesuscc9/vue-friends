@@ -11,6 +11,6 @@ module.exports = {
   },
   plugins: ['vue'],
   rules: {
-    semi: 'never',
+    semi: ['error', 'never'],
   },
 }
