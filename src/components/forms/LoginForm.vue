@@ -35,7 +35,7 @@ export default {
   methods: {
     handleLogin: async function () {
       try {
-        const res = await supabase.auth.signIn({ email: email.value })
+        await supabase.auth.signIn({ email: this.email.value })
       } catch (e) {}
     },
   },

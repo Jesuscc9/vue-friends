@@ -12,10 +12,10 @@
     </button>
   </div>
 
-  <div class="container m-auto mt-10">
+  <div class="container m-auto my-10 flex flex-col gap-10">
     <h1 class="font-semibold text-3xl mb-4 text-gray-700">Posts</h1>
     <div
-      class="bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
+      class="gap-10 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
       v-for="post in posts"
       v-bind:key="post.id"
     >
@@ -27,21 +27,24 @@
               >(You)</span
             >
           </p>
-          <button
-            type="button"
-            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-1 mr-2 mb-2 dark:focus:ring-yellow-900"
-            v-if="isAllowedToEdit(post)"
-          >
-            Editar
-          </button>
+          <div v-if="isAllowedToEdit(post)">
+            <button
+              type="button"
+              class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-1 mr-2 mb-2 dark:focus:ring-yellow-900"
+            >
+              Editar
+            </button>
+
+            <button
+              type="button"
+              class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-1 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              @click="handleDelete(post)"
+            >
+              Delete
+            </button>
+          </div>
         </div>
-        <img
-          class=""
-          :src="
-            post.picture || 'https://flowbite.com/docs/images/blog/image-1.jpg'
-          "
-          alt=""
-        />
+        <img class="image-container" :src="post.picture" alt="" />
         <div class="px-5 pb-5">
           <h5
             class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -50,6 +53,9 @@
           </h5>
           <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
             {{ post.description }}
+          </p>
+          <p class="uppercase italic text-xs text-gray-600 text-right">
+            {{ timeAgo(post.created_at) }}
           </p>
         </div>
       </div>
@@ -62,6 +68,12 @@ import Modal from '../components/UI/Modal.vue'
 import PostForm from '../components/forms/PostForm.vue'
 import { service } from '../services/service'
 import { supabase } from '../services/supabase'
+import TimeAgo from 'javascript-time-ago'
+import es from 'javascript-time-ago/locale/es'
+
+TimeAgo.addDefaultLocale(es)
+
+const timeAgoFn = new TimeAgo('en-US')
 
 const publicUrl =
   'https://tfpchdohtjoldkhwkial.supabase.co/storage/v1/object/public/posts/'
@@ -94,6 +106,14 @@ export default {
       this.closeModal()
       this.getPosts()
     },
+    timeAgo: (date) => timeAgoFn.format(new Date(date)),
+    handleDelete: async function (data) {
+      const newPosts = this.posts.filter((e) => e.id !== data.id)
+
+      this.posts = newPosts
+
+      await service.deletePost(data.id)
+    },
     getPosts: async function () {
       const { data } = await service.getPosts()
       this.posts = data
@@ -116,7 +136,14 @@ export default {
 
 <style>
 .container {
-  width: 600px;
+  width: 540px;
   max-width: 96%;
+}
+
+.image-container {
+  max-height: 600px;
+  object-fit: contain;
+  object-position: center center;
+  background-color: gray;
 }
 </style>
