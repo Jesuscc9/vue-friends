@@ -11,8 +11,6 @@ const supabaseWrapper = async (fn) => {
 
 const currentId = supabase.auth.user()?.id
 
-console.log({ currentId })
-
 export const service = {
 	getProfile: () => {
 		return currentId ? supabaseWrapper(() => supabase.from('profiles').select('*').eq('id', currentId)) : null
@@ -22,7 +20,7 @@ export const service = {
 			.from('posts')
 			.select(`*, profiles (
 				*
-			)`))
+			)`).order('id', { ascending: false }))
 	}, createPost: (body) => {
 		return supabaseWrapper(() => supabase
 			.from('posts')
@@ -31,5 +29,7 @@ export const service = {
 		return supabaseWrapper(() => supabase.storage.from('posts').upload(filePath, file))
 	}, deletePost: (id) => {
 		return supabaseWrapper(() => supabase.from('posts').delete().eq('id', id))
+	}, updatePost: (id, body) => {
+		return supabaseWrapper(() => supabase.from('posts').update(body).eq('id', id))
 	}
 }

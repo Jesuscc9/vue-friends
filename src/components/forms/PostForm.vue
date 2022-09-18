@@ -9,6 +9,7 @@
       <input
         type="text"
         id="title"
+        ref="titleInput"
         name="title"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="name@flowbite.com"
@@ -23,6 +24,7 @@
       >
       <input
         type="text"
+        ref="descriptionInput"
         name="description"
         id="description"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -34,6 +36,7 @@
       <label
         for="dropzone-file"
         v-show="!imagePreviewSrc"
+        v-if="!selectedPost"
         class="flex flex-col justify-center items-center w-full h-64 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
       >
         <div class="flex flex-col justify-center items-center pt-5 pb-6">
@@ -84,7 +87,7 @@
       </div>
     </div>
 
-    <v-button :isLoading="isLoading"> Submit </v-button>
+    <v-button :isLoading="isLoading">Submit</v-button>
   </form>
 </template>
 
@@ -95,11 +98,23 @@ const publicUrl =
   'https://tfpchdohtjoldkhwkial.supabase.co/storage/v1/object/public/posts/'
 
 export default {
+  data() {
+    return { imagePreviewSrc: null, isLoading: false }
+  },
   methods: {
     handleSubmit: async function (e) {
       this.isLoading = true
+      const selectedPost = this.$props.selectedPost
 
       const data = Object.fromEntries(new FormData(e.target))
+
+      if (selectedPost) {
+        const res = await service.updatePost(selectedPost.id, data)
+        console.log({ res })
+        this.$emit('onSubmit')
+        this.isLoading = false
+        return
+      }
 
       const file = data.picture
 
@@ -125,17 +140,17 @@ export default {
     },
     handleRemoveImg: function () {
       const inputFile = this.$refs.inputFile
-
-      console.log({ inputFile })
       inputFile.value = ''
-      this.imagePreviewSrc = ''
+      this.imagePreviewSrc = null
     },
   },
-  data: () => ({
-    imagePreviewSrc: null,
-    isLoading: false,
-  }),
+  mounted: function () {
+    if (!this.selectedPost) return
+    this.$refs.titleInput.value = this.selectedPost.title
+    this.$refs.descriptionInput.value = this.selectedPost.description
+  },
   emits: ['onSubmit'],
+  props: ['selectedPost'],
 }
 </script>
 
