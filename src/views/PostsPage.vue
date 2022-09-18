@@ -1,5 +1,5 @@
 <template>
-  <Modal v-show="isModalVisible" @close="closeModal">
+  <Modal v-if="isModalVisible" @close="closeModal">
     <PostForm @onSubmit="handleSubmit" />
   </Modal>
   <div class="mx-20 mt-14 flex justify-end">
@@ -22,7 +22,7 @@
       <div class="flex flex-col gap-y-6">
         <div class="px-5 pt-5 flex justify-between items-center">
           <p class="text-gray-800 text-sm">
-            {{ post.profiles.email }}
+            @{{ post.profiles.username }}
             <span class="font-bold text-xs" v-if="isAllowedToEdit(post)"
               >(You)</span
             >
@@ -45,6 +45,7 @@
           </div>
         </div>
         <img class="image-container" :src="post.picture" alt="" />
+        <img :src="previewImageSrc" alt="" />
         <div class="px-5 pb-5">
           <h5
             class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
@@ -75,9 +76,6 @@ TimeAgo.addDefaultLocale(es)
 
 const timeAgoFn = new TimeAgo('en-US')
 
-const publicUrl =
-  'https://tfpchdohtjoldkhwkial.supabase.co/storage/v1/object/public/posts/'
-
 export default {
   name: 'PostsPage',
   components: {
@@ -89,22 +87,9 @@ export default {
     isModalVisible: false,
   }),
   methods: {
-    handleSubmit: async function (data) {
-      const file = data.picture
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `${fileName}`
-
-      const res = await service.insertPostPicture({ filePath, file })
-
-      const insertedFilePath = `${publicUrl}${res.data.Key.split('/').at(-1)}`
-
-      data.picture = insertedFilePath
-
-      await service.createPost(data)
-
-      this.closeModal()
+    handleSubmit: function () {
       this.getPosts()
+      this.closeModal()
     },
     timeAgo: (date) => timeAgoFn.format(new Date(date)),
     handleDelete: async function (data) {

@@ -33,6 +33,7 @@
     <div class="flex justify-center items-center w-full">
       <label
         for="dropzone-file"
+        v-show="!imagePreviewSrc"
         class="flex flex-col justify-center items-center w-full h-64 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
       >
         <div class="flex flex-col justify-center items-center pt-5 pb-6">
@@ -66,28 +67,82 @@
           type="file"
           class="hidden"
           accept="image/png, image/jpeg, image/jpg"
+          @change="handleInputFileChange"
+          ref="inputFile"
         />
       </label>
+      <div v-show="imagePreviewSrc" class="relative">
+        <button
+          type="button"
+          class="absolute right-0 -top-2 w-6 h-6 border-red-500 border-2 bg-red-50 grid place-content-center rounded-full text-sm text-red-500"
+          @click="handleRemoveImg"
+        >
+          x
+        </button>
+
+        <img :src="imagePreviewSrc" class="preview-image" alt="" />
+      </div>
     </div>
 
-    <button
-      type="submit"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    >
-      Submit
-    </button>
+    <v-button :isLoading="isLoading"> Submit </v-button>
   </form>
 </template>
 
 <script>
+import { service } from '../../services/service'
+
+const publicUrl =
+  'https://tfpchdohtjoldkhwkial.supabase.co/storage/v1/object/public/posts/'
+
 export default {
   methods: {
     handleSubmit: async function (e) {
+      this.isLoading = true
+
       const data = Object.fromEntries(new FormData(e.target))
 
-      this.$emit('onSubmit', data)
+      const file = data.picture
+
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Math.random()}.${fileExt}`
+      const filePath = `${fileName}`
+
+      const res = await service.insertPostPicture({ filePath, file })
+
+      const insertedFilePath = `${publicUrl}${res.data.Key.split('/').at(-1)}`
+
+      data.picture = insertedFilePath
+
+      await service.createPost(data)
+
+      this.isLoading = false
+      this.$emit('onSubmit')
+    },
+    handleInputFileChange: function (e) {
+      const aux = e.target.files[0]
+
+      this.imagePreviewSrc = URL.createObjectURL(aux)
+    },
+    handleRemoveImg: function () {
+      const inputFile = this.$refs.inputFile
+
+      console.log({ inputFile })
+      inputFile.value = ''
+      this.imagePreviewSrc = ''
     },
   },
+  data: () => ({
+    imagePreviewSrc: null,
+    isLoading: false,
+  }),
   emits: ['onSubmit'],
 }
 </script>
+
+<style>
+.preview-image {
+  width: 404px;
+  height: 256px;
+  object-fit: contain;
+}
+</style>

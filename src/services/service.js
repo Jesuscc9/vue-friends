@@ -9,7 +9,14 @@ const supabaseWrapper = async (fn) => {
 	}
 }
 
+const currentId = supabase.auth.user()?.id
+
+console.log({ currentId })
+
 export const service = {
+	getProfile: () => {
+		return currentId ? supabaseWrapper(() => supabase.from('profiles').select('*').eq('id', currentId)) : null
+	},
 	getPosts: () => {
 		return supabaseWrapper(() => supabase
 			.from('posts')

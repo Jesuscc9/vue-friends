@@ -8,12 +8,15 @@ import { useRouter } from 'vue-router'
 
 export default {
   setup: function () {
-    const router = useRouter()
-
-    const user = supabase.auth.user()
-
-    if (user === null) return
-    router.push('/posts')
+    const { currentRoute, push } = useRouter()
+    supabase.auth.onAuthStateChange((evt, session) => {
+      // console.log({ evt, session })
+      // console.log({ currentRoute: currentRoute.value, push })
+      // if (evt === 'SIGNED_IN') {
+      //   if (currentRoute.value.fullPath.includes('posts')) return
+      //   push('/posts')
+      // }
+    })
   },
 }
 </script>
