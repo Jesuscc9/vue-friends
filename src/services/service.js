@@ -31,5 +31,11 @@ export const service = {
 		return supabaseWrapper(() => supabase.from('posts').delete().eq('id', id))
 	}, updatePost: (id, body) => {
 		return supabaseWrapper(() => supabase.from('posts').update(body).eq('id', id))
+	}, uploadUserAvatar: (file) => {
+		const fileExt = file.name.split('.').pop()
+		const fileName = `${Math.random()}.${fileExt}`
+		const filePath = `${fileName}`
+
+		return supabaseWrapper(() => supabase.storage.from('avatars').upload(filePath, file))
 	}
 }

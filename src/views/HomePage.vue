@@ -1,6 +1,6 @@
 <template>
   <div class="w-screen h-screen grid place-content-center">
-    <div class="border p-10 container flex gap-10 flex-col">
+    <div class="border p-10 home-container flex gap-10 flex-col">
       <h1 class="text-center">Hola este es el homepage</h1>
       <RouterLink
         to="/login"
@@ -22,7 +22,7 @@
 </template>
 
 <style>
-.container {
+.home-container {
   width: 600px;
   max-width: 96%;
 }

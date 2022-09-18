@@ -12,7 +12,7 @@
         >E-mail</label
       >
       <input
-        type="text"
+        type="email"
         id="email"
         v-model="email"
         name="email"
@@ -54,6 +54,60 @@
       />
     </div>
 
+    <div>
+      <label
+        for="email"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >Profile photo</label
+      >
+
+      <div v-if="previewAvatar" class="my-4">
+        <img
+          :src="previewAvatar"
+          alt=""
+          class="w-32 h-32 rounded-full bg-gray-600 object-cover object-center"
+        />
+      </div>
+
+      <div class="flex items-center w-full">
+        <label
+          for="dropzone-file"
+          class="flex px-3 py-2 items-center gap-3 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+        >
+          <p class="text-gray-500 text-sm font-semibold">Subir archivo</p>
+          <div class="flex justify-center items-center">
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              ></path>
+            </svg>
+
+            <p class="text-xs text-gray-500 dark:text-gray-400"></p>
+          </div>
+          <input
+            id="dropzone-file"
+            type="file"
+            name="avatar"
+            class="hidden"
+            ref="inputFileRef"
+            @input="handleInputFileChange"
+            accept="image/png, image/jpeg, image/jpg"
+            required
+          />
+        </label>
+      </div>
+    </div>
+
     <div
       class="bg-red-50 border border-red-400 p-2 px-4 rounded-lg"
       v-if="hasError"
@@ -79,27 +133,38 @@
 </template>
 
 <script>
+import { service } from '../../services/service'
 import { supabase } from '../../services/supabase'
+
+const publicUrl =
+  'https://tfpchdohtjoldkhwkial.supabase.co/storage/v1/object/public/avatars/'
 
 export default {
   methods: {
     handleSubmit: async function (e) {
-      const { email, password, username } = Object.fromEntries(
-        new FormData(e.target)
-      )
+      const data = Object.fromEntries(new FormData(e.target))
 
       this.isLoading = true
       this.hasError = ''
 
+      const {
+        data: { Key: insertedAvatarPath },
+      } = await service.uploadUserAvatar(data.avatar)
+
+      const insertedFileUrl = `${publicUrl}${insertedAvatarPath
+        .split('/')
+        .at(-1)}`
+
       try {
         const { error } = await supabase.auth.signUp(
           {
-            email,
-            password,
+            email: data.email,
+            password: data.password,
           },
           {
             data: {
-              username,
+              username: data.username,
+              avatar_url: insertedFileUrl,
             },
           }
         )
@@ -116,12 +181,17 @@ export default {
         this.isLoading = false
       }
     },
+    handleInputFileChange: function (e) {
+      const file = e.target.files[0]
+      this.previewAvatar = URL.createObjectURL(file)
+    },
   },
   data: () => ({
     isLoading: false,
     showEmailMessage: false,
     email: '',
     hasError: '',
+    previewAvatar: null,
   }),
 }
 </script>

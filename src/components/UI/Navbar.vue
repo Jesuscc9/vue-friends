@@ -2,10 +2,10 @@
 
 <template>
   <nav
-    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900"
+    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 w-full shadow"
   >
     <div class="container flex flex-wrap justify-between items-center mx-auto">
-      <a href="https://flowbite.com/" class="flex items-center">
+      <a href="" class="flex items-center">
         <img
           src="https://flowbite.com/docs/images/logo.svg"
           class="mr-3 h-6 sm:h-9"
@@ -13,61 +13,44 @@
         />
         <span
           class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
-          >Flowbite</span
+          >Vue Friends</span
         >
       </a>
       <div class="flex items-center md:order-2">
         <button
-          type="button"
-          class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+          class="flex items-center gap-2ounded-lg p-1 px-3 gap-3"
           id="user-menu-button"
           aria-expanded="false"
           data-dropdown-toggle="user-dropdown"
           data-dropdown-placement="bottom"
+          @click="triggerDropdown"
         >
-          <span class="sr-only">Open user menu</span>
-          <img
-            class="w-8 h-8 rounded-full"
-            src="/docs/images/people/profile-picture-3.jpg"
-            alt="user photo"
-          />
+          <p class="text-sm">@{{ user.user_metadata.username }}</p>
+          <div class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0">
+            <span class="sr-only">Open user menu</span>
+            <img
+              class="w-10 h-10 rounded-full object-cover"
+              :src="user.user_metadata.avatar_url"
+              alt="user photo"
+            />
+          </div>
         </button>
         <!-- Dropdown menu -->
         <div
-          class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+          class="absolute top-12 right-4 z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-md border dark:bg-gray-700 dark:divide-gray-600"
           id="user-dropdown"
+          v-if="showDropdown"
         >
           <div class="py-3 px-4">
-            <span class="block text-sm text-gray-900 dark:text-white"
-              >Bonnie Green</span
-            >
+            <span class="block text-sm text-gray-900 dark:text-white">{{
+              user.user_metadata.username
+            }}</span>
             <span
               class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
-              >name@flowbite.com</span
+              >{{ user.email }}</span
             >
           </div>
           <ul class="py-1" aria-labelledby="user-menu-button">
-            <li>
-              <a
-                href="#"
-                class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Dashboard</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Settings</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Earnings</a
-              >
-            </li>
             <li>
               <a
                 href="#"
@@ -110,37 +93,9 @@
           <li>
             <a
               href="#"
-              class="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
+              class="block py-2 pr-4 pl-3 text-white font-semibold bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
               aria-current="page"
-              >Home</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >About</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >Services</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >Pricing</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >Contact</a
+              >Posts</a
             >
           </li>
         </ul>
@@ -148,3 +103,22 @@
     </div>
   </nav>
 </template>
+
+<script>
+import { supabase } from '../../services/supabase'
+
+export default {
+  created: () => {
+    console.log({ user: supabase.auth.user() })
+  },
+  methods: {
+    triggerDropdown() {
+      this.showDropdown = !this.showDropdown
+    },
+  },
+  data: () => ({
+    showDropdown: false,
+    user: supabase.auth.user(),
+  }),
+}
+</script>

@@ -1,18 +1,14 @@
 <template>
+  <Navbar></Navbar>
+
   <Modal v-if="isModalVisible" @close="closeModal">
     <PostForm @onSubmit="handleSubmit" :selected-post="selectedPost" />
   </Modal>
   <div class="mx-20 mt-14 flex justify-end">
-    <button
-      type="button"
-      @click="showModal"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-    >
-      Crear post +
-    </button>
+    <v-button @click="showModal"> Crear post + </v-button>
   </div>
 
-  <div class="container m-auto my-10 flex flex-col gap-10">
+  <div class="posts-container m-auto my-10 flex flex-col gap-10">
     <h1 class="font-semibold text-3xl mb-4 text-gray-700">Posts</h1>
     <div
       class="gap-10 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
@@ -72,6 +68,7 @@ import { service } from '../services/service'
 import { supabase } from '../services/supabase'
 import TimeAgo from 'javascript-time-ago'
 import es from 'javascript-time-ago/locale/es'
+import Navbar from '../components/UI/Navbar.vue'
 
 TimeAgo.addDefaultLocale(es)
 
@@ -82,6 +79,7 @@ export default {
   components: {
     Modal,
     PostForm,
+    Navbar,
   },
   data: () => ({
     posts: [],
@@ -134,7 +132,7 @@ export default {
 </script>
 
 <style>
-.container {
+.posts-container {
   width: 540px;
   max-width: 96%;
 }
