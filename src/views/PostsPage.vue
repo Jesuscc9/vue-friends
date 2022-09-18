@@ -1,15 +1,17 @@
 <template>
   <Navbar></Navbar>
 
-  <Modal v-if="isModalVisible" @close="closeModal">
-    <PostForm @onSubmit="handleSubmit" :selected-post="selectedPost" />
-  </Modal>
-  <div class="mx-20 mt-14 flex justify-end">
-    <v-button @click="showModal"> Crear post + </v-button>
+  <Transition class="z-10">
+    <Modal v-if="isModalVisible" @close="closeModal">
+      <PostForm @onSubmit="handleSubmit" :selected-post="selectedPost" />
+    </Modal>
+  </Transition>
+
+  <div class="mx-20 mt-4 flex justify-end z-0">
+    <v-button @click="showModal"> Nueva publicación + </v-button>
   </div>
 
   <div class="posts-container m-auto my-10 flex flex-col gap-10">
-    <h1 class="font-semibold text-3xl mb-4 text-gray-700">Posts</h1>
     <div
       class="gap-10 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
       v-for="post in posts"
@@ -17,12 +19,21 @@
     >
       <div class="flex flex-col gap-y-6">
         <div class="px-5 pt-5 flex justify-between items-center">
-          <p class="text-gray-800 text-sm">
-            @{{ post.profiles.username }}
-            <span class="font-bold text-xs" v-if="isAllowedToEdit(post)"
-              >(You)</span
-            >
-          </p>
+          <div class="flex items-center gap-2">
+            <div class="border-2 border-blue-800 rounded-full p-0.5">
+              <img
+                :src="post.profiles.avatar_url"
+                class="w-8 h-8 rounded-full object-cover"
+                alt=""
+              />
+            </div>
+            <p class="text-gray-800 text-sm font-bold">
+              @{{ post.profiles.username }}
+              <span class="text-gray-400 text-xs" v-if="isAllowedToEdit(post)"
+                >(Tú)</span
+              >
+            </p>
+          </div>
           <div v-if="isAllowedToEdit(post)">
             <button
               type="button"
@@ -41,9 +52,8 @@
             </button>
           </div>
         </div>
-        <img class="image-container" :src="post.picture" alt="" />
-        <img :src="previewImageSrc" alt="" />
-        <div class="px-5 pb-5">
+        <img class="image-container bg-gray-400" :src="post.picture" alt="" />
+        <div class="px-5">
           <h5
             class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
           >
@@ -52,9 +62,35 @@
           <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
             {{ post.description }}
           </p>
-          <p class="uppercase italic text-xs text-gray-600 text-right">
+
+          <div class="flex flex-col gap-2">
+            <button
+              @click="handleLikeClick(post)"
+              :disabled="isLiking"
+              class="border-2 border-black w-6 h-6 rounded-full transition-opacity"
+              :class="{
+                'opacity-50': isLiking,
+                'bg-red-500': isPostLiked(post),
+              }"
+            ></button>
+            <span class="font-bold text-sm"
+              >{{ post.likes.length }} Me gusta</span
+            >
+          </div>
+          <p class="uppercase mt-2 text-xs text-gray-400">
             {{ timeAgo(post.created_at) }}
           </p>
+        </div>
+        <div class="border-t border">
+          <div class="p-4">
+            <input
+              type="text"
+              id="first_name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Your comment..."
+              required
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -73,6 +109,7 @@ import Navbar from '../components/UI/Navbar.vue'
 TimeAgo.addDefaultLocale(es)
 
 const timeAgoFn = new TimeAgo('en-US')
+const user = supabase.auth.user()
 
 export default {
   name: 'PostsPage',
@@ -85,11 +122,15 @@ export default {
     posts: [],
     isModalVisible: false,
     selectedPost: null,
+    isLiking: false,
   }),
   methods: {
     handleSubmit: function () {
       this.getPosts()
       this.closeModal()
+    },
+    isPostLiked: function (post) {
+      return post.likes.find((e) => e.created_by === user.id)
     },
     timeAgo: (date) => timeAgoFn.format(new Date(date)),
     handleDelete: async function (data) {
@@ -115,6 +156,21 @@ export default {
     isAllowedToEdit(post) {
       return post.created_by === supabase.auth.user().id
     },
+    handleLikeClick: async function (post) {
+      this.isLiking = true
+
+      if (this.isPostLiked(post)) {
+        const userLikeId = post.likes.find((e) => e.created_by === user.id).id
+        await service.dislikePost(userLikeId)
+        await this.getPosts()
+        this.isLiking = false
+        return
+      }
+
+      await service.likePost(post.id)
+      await this.getPosts()
+      this.isLiking = false
+    },
   },
   created() {
     this.getPosts()
@@ -133,7 +189,7 @@ export default {
 
 <style>
 .posts-container {
-  width: 540px;
+  width: 470px;
   max-width: 96%;
 }
 
@@ -141,6 +197,5 @@ export default {
   max-height: 600px;
   object-fit: contain;
   object-position: center center;
-  background-color: gray;
 }
 </style>

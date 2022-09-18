@@ -49,26 +49,27 @@
 <script>
 import { supabase } from '../../services/supabase'
 
-import { useRouter } from 'vue-router'
-
 export default {
   methods: {
     handleSubmit: async function (e) {
-      const router = useRouter()
       const { email, password } = Object.fromEntries(new FormData(e.target))
 
       this.isLoading = true
       this.hasError = ''
+
       try {
         const { error } = await supabase.auth.signIn({ email, password })
-        if (error) {
+
+        console.log({ error })
+
+        if (error?.message) {
+          console.log('entra')
           this.hasError = error.message
           return
         }
 
-        router.push('/posts')
+        window.location.reload()
       } catch (e) {
-        this.hasError = JSON.stringify(e)
       } finally {
         this.isLoading = false
       }

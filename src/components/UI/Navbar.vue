@@ -26,16 +26,17 @@
           @click="triggerDropdown"
         >
           <p class="text-sm">@{{ user.user_metadata.username }}</p>
-          <div class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0">
+          <div class="flex mr-3 text-sm rounded-full md:mr-0">
             <span class="sr-only">Open user menu</span>
-            <img
-              class="w-10 h-10 rounded-full object-cover"
-              :src="user.user_metadata.avatar_url"
-              alt="user photo"
-            />
+            <div class="border-2 border-blue-500 rounded-full">
+              <img
+                class="w-10 h-10 rounded-full object-cover"
+                :src="user.user_metadata.avatar_url"
+                alt="user photo"
+              />
+            </div>
           </div>
         </button>
-        <!-- Dropdown menu -->
         <div
           class="absolute top-12 right-4 z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-md border dark:bg-gray-700 dark:divide-gray-600"
           id="user-dropdown"
@@ -54,6 +55,7 @@
             <li>
               <a
                 href="#"
+                @click="handleLogout"
                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >Sign out</a
               >
@@ -114,6 +116,10 @@ export default {
   methods: {
     triggerDropdown() {
       this.showDropdown = !this.showDropdown
+    },
+    handleLogout() {
+      supabase.auth.signOut()
+      window.location.reload()
     },
   },
   data: () => ({

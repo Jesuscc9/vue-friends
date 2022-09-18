@@ -1,6 +1,6 @@
 <template>
-  <div class="modal-component" ref="modalComponent">
-    <div class="overlay"></div>
+  <div class="modal-component z-10">
+    <div class="overlay" @click="handleOverlayClick"></div>
     <div class="modal rounded-lg p-10">
       <div class="flex w-full justify-end">
         <button
@@ -23,9 +23,9 @@ export default {
     close() {
       this.$emit('close')
     },
-  },
-  mounted: function () {
-    this.$refs.modalComponent.style.opacity = '1'
+    handleOverlayClick() {
+      this.$emit('close')
+    },
   },
   emits: ['close'],
 }
@@ -33,7 +33,6 @@ export default {
 
 <style>
 .modal-component {
-  opacity: 0;
   transition: all 0.2s;
 }
 
@@ -44,7 +43,7 @@ export default {
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .modal {
@@ -56,6 +55,16 @@ export default {
   width: 500px;
   background-color: white;
   max-width: 98%;
-  z-index: 11;
+  z-index: 101;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

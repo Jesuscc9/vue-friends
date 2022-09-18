@@ -20,6 +20,8 @@ export const service = {
 			.from('posts')
 			.select(`*, profiles (
 				*
+			), likes (
+				*
 			)`).order('id', { ascending: false }))
 	}, createPost: (body) => {
 		return supabaseWrapper(() => supabase
@@ -27,15 +29,19 @@ export const service = {
 			.insert([body]).single())
 	}, insertPostPicture: ({ filePath, file }) => {
 		return supabaseWrapper(() => supabase.storage.from('posts').upload(filePath, file))
-	}, deletePost: (id) => {
-		return supabaseWrapper(() => supabase.from('posts').delete().eq('id', id))
-	}, updatePost: (id, body) => {
-		return supabaseWrapper(() => supabase.from('posts').update(body).eq('id', id))
+	}, deletePost: async (postId) => {
+		await supabase.from('likes').delete().eq('post_id', postId)
+		return supabaseWrapper(() => supabase.from('posts').delete().eq('id', postId))
+	}, updatePost: (postId, body) => {
+		return supabaseWrapper(() => supabase.from('posts').update(body).eq('id', postId))
 	}, uploadUserAvatar: (file) => {
 		const fileExt = file.name.split('.').pop()
 		const fileName = `${Math.random()}.${fileExt}`
 		const filePath = `${fileName}`
-
 		return supabaseWrapper(() => supabase.storage.from('avatars').upload(filePath, file))
+	}, likePost: (postId) => {
+		return supabaseWrapper(() => supabase.from('likes').insert({ post_id: postId }).single())
+	}, dislikePost: (likeId) => {
+		return supabaseWrapper(() => supabase.from('likes').delete().eq('id', likeId))
 	}
 }
