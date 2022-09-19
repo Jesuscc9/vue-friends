@@ -4,7 +4,7 @@
       <label
         for="title"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Title post</label
+        >Título</label
       >
       <input
         type="text"
@@ -12,15 +12,15 @@
         ref="titleInput"
         name="title"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="name@flowbite.com"
+        placeholder="Título..."
         required
       />
     </div>
     <div>
       <label
         for="description"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Description</label
+        class="mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >Descripción</label
       >
       <input
         type="text"
@@ -29,6 +29,7 @@
         id="description"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         required
+        placeholder="De qué trata..."
       />
     </div>
 
@@ -58,10 +59,10 @@
             ></path>
           </svg>
           <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-            <span class="font-semibold">Click to upload</span> or drag and drop
+            <span class="font-semibold">Clic para subir</span>
           </p>
           <p class="text-xs text-gray-500 dark:text-gray-400">
-            SVG, PNG, JPG or GIF (MAX. 800x400px)
+            PNG, JPG o JPEG
           </p>
         </div>
         <input
@@ -109,8 +110,7 @@ export default {
       const data = Object.fromEntries(new FormData(e.target))
 
       if (selectedPost) {
-        const res = await service.updatePost(selectedPost.id, data)
-        console.log({ res })
+        await service.updatePost(selectedPost.id, data)
         this.$emit('onSubmit')
         this.isLoading = false
         return

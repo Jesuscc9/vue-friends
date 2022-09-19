@@ -60,10 +60,7 @@ export default {
       try {
         const { error } = await supabase.auth.signIn({ email, password })
 
-        console.log({ error })
-
         if (error?.message) {
-          console.log('entra')
           this.hasError = error.message
           return
         }

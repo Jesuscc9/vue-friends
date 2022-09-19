@@ -110,9 +110,6 @@
 import { supabase } from '../../services/supabase'
 
 export default {
-  created: () => {
-    console.log({ user: supabase.auth.user() })
-  },
   methods: {
     triggerDropdown() {
       this.showDropdown = !this.showDropdown

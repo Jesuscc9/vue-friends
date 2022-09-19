@@ -1,24 +1,28 @@
 <template>
-  <div class="modal-component z-10">
-    <div class="overlay" @click="handleOverlayClick"></div>
-    <div class="modal rounded-lg p-10">
-      <div class="flex w-full justify-end">
-        <button
-          class="border w-7 h-7 rounded-xl grid place-content-center"
-          @click="close"
-        >
-          <span class="font-bold">x</span>
-        </button>
+  <Transition>
+    <div class="modal-component z-10" v-if="showModal">
+      <div class="overlay" @click="handleOverlayClick"></div>
+      <div class="modal rounded-lg p-10">
+        <div class="flex w-full justify-end">
+          <button
+            ref="closeButton"
+            class="rounded-xl grid place-content-center relative bottom-6 left-6 text-gray-500 hover:text-gray-700 transition-colors"
+            @click="close"
+          >
+            <font-awesome-icon :icon="['fa', 'xmark']" class="w-5 h-5 m-2" />
+          </button>
+        </div>
+        <slot></slot>
       </div>
-      <slot></slot>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script>
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Modal',
+  props: ['show'],
   methods: {
     close() {
       this.$emit('close')
@@ -26,8 +30,27 @@ export default {
     handleOverlayClick() {
       this.$emit('close')
     },
+    handleEscClic(e) {
+      if (e.code.toLowerCase() === 'escape') {
+        this.$emit('close')
+      }
+    },
   },
   emits: ['close'],
+  mounted() {
+    document.addEventListener('keydown', this.handleEscClic)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.handleEscClic)
+  },
+  watch: {
+    show(newVal) {
+      this.showModal = newVal
+    },
+  },
+  data: () => ({
+    showModal: false,
+  }),
 }
 </script>
 
