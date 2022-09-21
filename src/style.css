@@ -12,4 +12,9 @@
 body {
   padding: 0;
   margin: 0;
+  background-color: #f8fafb;
+}
+
+.custom-shadow {
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
 }

@@ -1,6 +1,6 @@
 <template>
   <form
-    class="border p-10 rounded-lg flex flex-col gap-6"
+    class="p-4 sm:p-10 rounded-lg flex flex-col gap-6 m-auto bg-white custom-shadow border"
     @submit.prevent="handleSubmit"
   >
     <div>
@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 form {
   width: 600px;
   max-width: 96%;

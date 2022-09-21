@@ -154,7 +154,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .preview-image {
   width: 404px;
   height: 256px;

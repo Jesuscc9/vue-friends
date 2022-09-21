@@ -54,7 +54,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .modal-component {
   transition: all 0.2s;
 }

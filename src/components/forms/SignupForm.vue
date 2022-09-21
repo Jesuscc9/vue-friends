@@ -1,6 +1,6 @@
 <template>
   <form
-    class="border p-10 rounded-lg flex flex-col gap-6"
+    class="m-auto border p-10 rounded-lg flex flex-col gap-6 bg-white custom-shadow"
     @submit.prevent="handleSubmit"
     @input="hasError = ''"
     v-if="!showEmailMessage"
@@ -196,7 +196,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 form {
   width: 600px;
   max-width: 96%;

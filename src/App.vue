@@ -1,18 +1,18 @@
 <template>
   <Navbar />
-  <RouterView />
+  <RouterView> </RouterView>
 </template>
 
 <script>
-import Navbar from '@/components/UI/Navbar.vue'
 import { supabase } from './services/supabase'
+import Navbar from './components/UI/Navbar.vue'
 
 export default {
   methods: () => {},
-  components: { Navbar },
   computed: {
     isLoggedIn: () => supabase.auth.user(),
   },
+  components: { Navbar },
 }
 </script>
 

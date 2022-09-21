@@ -1,12 +1,12 @@
 <template>
-  <Navbar></Navbar>
+  <Navbar />
 
   <Modal :show="isModalVisible" @close="closeModal">
     <PostForm @onSubmit="handleSubmit" :selected-post="selectedPost" />
   </Modal>
 
   <div
-    class="mx-4 sm_mx-10 whitespace-nowrap md_mx-20 mt-4 flex justify-end z-0"
+    class="mx-4 sm_mx-10 whitespace-nowrap md_mx-20 mt-10 flex justify-center z-0"
   >
     <v-button @click="showModal"> Nueva publicación + </v-button>
   </div>
@@ -81,7 +81,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .posts-container {
   width: 470px;
   max-width: 96%;

@@ -2,7 +2,7 @@
 
 <template>
   <nav
-    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 w-full shadow"
+    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900 w-full shadow fixed z-10 top-0"
   >
     <div class="container flex flex-wrap justify-between items-center mx-auto">
       <a href="" class="flex items-center">
@@ -16,7 +16,8 @@
           >Vue Friends</span
         >
       </a>
-      <div class="flex items-center md:order-2">
+
+      <div v-if="isLoggedIn" class="flex items-center md:order-2">
         <button
           class="flex items-center gap-2ounded-lg p-1 px-3 gap-3"
           id="user-menu-button"
@@ -85,6 +86,21 @@
           </svg>
         </button>
       </div>
+
+      <div class="flex items-center md:order-2 gap-3" v-else>
+        <RouterLink to="/login">
+          <Button class="rounded-full font-semibold"> Log In </Button>
+        </RouterLink>
+
+        <RouterLink to="/signup">
+          <Button
+            class="rounded-full font-semibold bg-white text-gray-600 border"
+          >
+            Signup
+          </Button>
+        </RouterLink>
+      </div>
+
       <div
         class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
         id="mobile-menu-2"
@@ -104,14 +120,13 @@
       </div>
     </div>
   </nav>
+
+  <div class="nav-spacing"></div>
 </template>
 
 <script>
 import { supabase } from '../../services/supabase'
-
-import { useUserStore } from '@/store/userStore'
-
-console.log({ user: useUserStore() })
+import Button from './Button.vue'
 
 export default {
   methods: {
@@ -127,6 +142,15 @@ export default {
     showDropdown: false,
     user: supabase.auth.user(),
   }),
-  mounted() {},
+  computed: {
+    isLoggedIn: () => Boolean(supabase.auth.user()),
+  },
+  components: { Button },
 }
 </script>
+
+<style>
+.nav-spacing {
+  height: 72px;
+}
+</style>
