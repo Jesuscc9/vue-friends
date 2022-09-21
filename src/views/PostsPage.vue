@@ -1,17 +1,19 @@
 <template>
-  <Navbar />
-
   <Modal :show="isModalVisible" @close="closeModal">
     <PostForm @onSubmit="handleSubmit" :selected-post="selectedPost" />
   </Modal>
 
   <div
-    class="mx-4 sm_mx-10 whitespace-nowrap md_mx-20 mt-10 flex justify-center z-0"
+    class="mx-4 sm:mx-10 whitespace-nowrap md:mx-20 mt-10 flex justify-end z-0"
+    :class="{
+      'justify-center': posts.length === 0,
+      'mb-10': posts.length > 0,
+    }"
   >
     <v-button @click="showModal"> Nueva publicación + </v-button>
   </div>
 
-  <div class="posts-container m-auto my-10 flex flex-col gap-10">
+  <div class="posts-container m-auto mb-10 flex flex-col gap-10">
     <div v-if="posts.length === 0">
       <h1 class="text-center my-10 font-semibold">
         Aún no hay ningún post, comienza a compartir momentos
@@ -31,14 +33,11 @@ import Post from '@/components/UI/Post.vue'
 import { service } from '@/services/service'
 import { supabase } from '@/services/supabase'
 
-import Navbar from '@/components/UI/Navbar.vue'
-
 export default {
   name: 'PostsPage',
   components: {
     Modal,
     PostForm,
-    Navbar,
     Post,
   },
   data: () => ({

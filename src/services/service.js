@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { supabase } from './supabase'
 
 const supabaseWrapper = async (fn) => {
@@ -15,8 +16,8 @@ export const service = {
   getProfile: () => {
     return currentId
       ? supabaseWrapper(() =>
-          supabase.from('profiles').select('*').eq('id', currentId)
-        )
+        supabase.from('profiles').select('*').eq('id', currentId)
+      )
       : null
   },
   getPosts: () => {
@@ -28,7 +29,11 @@ export const service = {
 				*
 			), likes (
 				*
-			)`
+			), comments (
+        *, profiles (
+          *
+        )
+      )`
         )
         .order('id', { ascending: false })
     )
@@ -43,6 +48,7 @@ export const service = {
   },
   deletePost: async (postId) => {
     await supabase.from('likes').delete().eq('post_id', postId)
+    await supabase.from('comments').delete().eq('post_id', postId)
     return supabaseWrapper(() =>
       supabase.from('posts').delete().eq('id', postId)
     )
@@ -69,5 +75,7 @@ export const service = {
     return supabaseWrapper(() =>
       supabase.from('likes').delete().eq('id', likeId)
     )
-  },
+  }, commentPost: (postId, comment) => {
+    return supabaseWrapper(() => supabase.from('comments').insert({ post_id: postId, body: comment }))
+  }
 }

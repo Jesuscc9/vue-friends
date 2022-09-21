@@ -26,7 +26,7 @@
       <label
         for="username"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Username</label
+        >Nombre de usuario</label
       >
       <input
         type="username"
@@ -58,7 +58,7 @@
       <label
         for="email"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Profile photo</label
+        >Foto de perfil</label
       >
 
       <div v-if="previewAvatar" class="my-4">
@@ -120,7 +120,7 @@
 
   <div
     v-else
-    class="border p-10 px-20 rounded-lg text-center flex flex-col gap-4 items-center"
+    class="email-sent m-auto custom-shadow border p-10 px-20 rounded-xl text-center flex flex-col gap-4 items-center bg-white"
   >
     <h1 class="text-xl font-bold text-gray-800">Registrado Exitosamente!</h1>
     <img src="../../assets/sent-email.png" alt="" class="w-48" />
@@ -200,5 +200,10 @@ export default {
 form {
   width: 600px;
   max-width: 96%;
+}
+
+.email-sent {
+  width: 600px;
+  max-width: 94%;
 }
 </style>
