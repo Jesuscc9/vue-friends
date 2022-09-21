@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "1.35.6",
     "axios": "^0.27.2",
     "javascript-time-ago": "^2.5.7",
+    "pinia": "^2.0.22",
     "v-click-outside": "^3.2.0",
     "vue": "^3.2.37",
     "vue-clickaway": "^2.2.2",

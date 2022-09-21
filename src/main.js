@@ -10,11 +10,16 @@ import Button from './components/UI/Button.vue'
 
 import 'vue-loaders/dist/vue-loaders.css'
 import VueLoaders from 'vue-loaders'
+import { createPinia } from 'pinia'
 
 library.add(faXmark, faArrowRight)
 
 const app = createApp(App).component("font-awesome-icon", FontAwesomeIcon).component('v-button', Button)
 
+const pinia = createPinia()
+
+app.use(pinia)
 app.use(router)
 app.use(VueLoaders)
+
 app.mount('#app')

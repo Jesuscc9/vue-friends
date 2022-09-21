@@ -25,13 +25,13 @@
           data-dropdown-placement="bottom"
           @click="triggerDropdown"
         >
-          <p class="text-sm">@{{ user.user_metadata.username }}</p>
+          <p class="text-sm">@{{ user?.user_metadata?.username }}</p>
           <div class="flex mr-3 text-sm rounded-full md:mr-0">
             <span class="sr-only">Open user menu</span>
             <div class="border-2 border-blue-500 rounded-full">
               <img
                 class="w-10 h-10 rounded-full object-cover"
-                :src="user.user_metadata.avatar_url"
+                :src="user?.user_metadata?.avatar_url"
                 alt="user photo"
               />
             </div>
@@ -44,11 +44,11 @@
         >
           <div class="py-3 px-4">
             <span class="block text-sm text-gray-900 dark:text-white">{{
-              user.user_metadata.username
+              user?.user_metadata.username
             }}</span>
             <span
               class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
-              >{{ user.email }}</span
+              >{{ user?.email }}</span
             >
           </div>
           <ul class="py-1" aria-labelledby="user-menu-button">
@@ -109,6 +109,10 @@
 <script>
 import { supabase } from '../../services/supabase'
 
+import { useUserStore } from '@/store/userStore'
+
+console.log({ user: useUserStore() })
+
 export default {
   methods: {
     triggerDropdown() {
@@ -123,5 +127,6 @@ export default {
     showDropdown: false,
     user: supabase.auth.user(),
   }),
+  mounted() {},
 }
 </script>
